@@ -31,12 +31,12 @@ import {
 const getImageUrl = (item) => {
   // Gunakan foto_url dari accessor Laravel jika ada
   if (item?.foto_url) return item.foto_url;
-  
+
   // Fallback: buat manual jika hanya ada path foto
   if (item?.foto) {
     return `${api.defaults.baseURL.replace('/api', '')}/storage/${item.foto}`;
   }
-  
+
   return null;
 };
 
@@ -45,7 +45,9 @@ const DetailBarang = () => {
   const navigate = useNavigate();
   const toast = useToast();
 
-  // State
+  // ============================================
+  // STATE
+  // ============================================
   const [barang, setBarang] = useState(null);
   const [pengecekan, setPengecekan] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,7 +58,7 @@ const DetailBarang = () => {
   const [actionLoading, setActionLoading] = useState(false);
 
   // Confirm Dialog
-  const [confirmAction, setConfirmAction] = useState(null);
+  const [confirmAction, setConfirmAction] = useState(null); // 'hilang' | 'selesai' | null
 
   // ============================================
   // FETCH DATA
@@ -143,7 +145,7 @@ const DetailBarang = () => {
   };
 
   // ============================================
-  // KOMPONEN GAMBAR UTAMA
+  // KOMPONEN GAMBAR UTAMA (dengan fallback)
   // ============================================
   const BarangImage = ({ item }) => {
     const imageUrl = getImageUrl(item);
@@ -232,7 +234,10 @@ const DetailBarang = () => {
           KONTEN UTAMA: FOTO + INFO
           ============================================ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Foto — DENGAN HANDLING ERROR */}
+        
+        {/* ============================================
+            FOTO BARANG
+            ============================================ */}
         <div className="lg:col-span-1">
           <div className="
             bg-white dark:bg-gray-900
@@ -243,7 +248,9 @@ const DetailBarang = () => {
           </div>
         </div>
 
-        {/* Info Detail */}
+        {/* ============================================
+            INFO DETAIL BARANG
+            ============================================ */}
         <div className="lg:col-span-2">
           <div className="
             bg-white dark:bg-gray-900
@@ -267,34 +274,55 @@ const DetailBarang = () => {
 
             {/* Grid Info */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+              {/* Kategori */}
               <div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Kategori</p>
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-50">{barang.kategori}</p>
               </div>
+
+              {/* Jumlah Total */}
               <div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Jumlah Total</p>
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-50">{barang.jumlah_total}</p>
               </div>
+
+              {/* Jumlah Tersedia */}
               <div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Jumlah Tersedia</p>
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-50">{barang.jumlah_tersedia}</p>
               </div>
+
+              {/* Terakhir Dicek — DENGAN JAM */}
               <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Terakhir Dicek</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                  <Clock size={12} /> Terakhir Dicek
+                </p>
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-50">
                   {formatDate(barang.last_checked_at, { withTime: true, emptyText: 'Belum pernah' })}
                 </p>
               </div>
+
+              {/* Tanggal Hilang — DENGAN JAM (jika ada) */}
               {barang.tanggal_hilang && (
                 <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Tanggal Hilang</p>
-                  <p className="text-sm font-medium text-red-600 dark:text-red-400">{formatDate(barang.tanggal_hilang)}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                    <Calendar size={12} /> Tanggal Hilang
+                  </p>
+                  <p className="text-sm font-medium text-red-600 dark:text-red-400">
+                    {formatDate(barang.tanggal_hilang, { withTime: true })}
+                  </p>
                 </div>
               )}
+
+              {/* Tanggal Selesai — DENGAN JAM (jika ada) */}
               {barang.tanggal_selesai && (
                 <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Tanggal Selesai</p>
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-50">{formatDate(barang.tanggal_selesai)}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                    <Calendar size={12} /> Tanggal Selesai
+                  </p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-50">
+                    {formatDate(barang.tanggal_selesai, { withTime: true })}
+                  </p>
                 </div>
               )}
             </div>
@@ -307,8 +335,12 @@ const DetailBarang = () => {
               </div>
             )}
 
-            {/* Tombol Aksi */}
+            {/* ============================================
+                TOMBOL AKSI (BERDASARKAN STATUS)
+                ============================================ */}
             <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
+              
+              {/* Status: Aktif */}
               {barang.status === 'aktif' && (
                 <>
                   <button
@@ -350,6 +382,7 @@ const DetailBarang = () => {
                 </>
               )}
 
+              {/* Status: Hilang */}
               {barang.status === 'hilang' && (
                 <button
                   onClick={handlePulihkan}
@@ -367,12 +400,14 @@ const DetailBarang = () => {
                 </button>
               )}
 
+              {/* Status: Selesai */}
               {barang.status === 'selesai' && (
                 <p className="text-sm text-gray-500 dark:text-gray-400 italic">
                   Barang sudah diarsipkan dan tidak dapat diubah.
                 </p>
               )}
 
+              {/* Tombol Edit (selalu tampil kecuali status selesai) */}
               {barang.status !== 'selesai' && (
                 <Link
                   to={`/barang?edit=${barang.id}`}
@@ -406,12 +441,14 @@ const DetailBarang = () => {
         rounded-2xl border border-gray-200 dark:border-gray-700
         overflow-hidden
       ">
+        {/* Header */}
         <div className="p-5 border-b border-gray-200 dark:border-gray-700">
           <h2 className="font-semibold text-gray-900 dark:text-gray-50">
             Riwayat Pengecekan
           </h2>
         </div>
 
+        {/* Body */}
         <div className="p-5">
           {pengecekan.length === 0 ? (
             <EmptyState
@@ -457,24 +494,38 @@ const DetailBarang = () => {
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                   {pengecekan.map((cek) => (
                     <tr key={cek.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                      
+                      {/* Tanggal + Jam */}
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <Calendar size={14} className="text-gray-400" />
-                          <span className="text-sm text-gray-700 dark:text-gray-300">
-                            {formatDate(cek.tanggal_cek)}
-                          </span>
+                          <div>
+                            <span className="text-sm text-gray-700 dark:text-gray-300">
+                              {formatDate(cek.tanggal_cek)}
+                            </span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-0.5">
+                              <Clock size={11} />
+                              {formatDate(cek.tanggal_cek, { withTime: true }).split(', ')[1] || ''}
+                            </span>
+                          </div>
                         </div>
                       </td>
+
+                      {/* Kondisi */}
                       <td className="px-4 py-3">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getKondisiBadge(cek.kondisi_cek)}`}>
                           {getKondisiLabel(cek.kondisi_cek)}
                         </span>
                       </td>
+
+                      {/* Jumlah */}
                       <td className="px-4 py-3 text-center">
                         <span className="text-sm text-gray-700 dark:text-gray-300">
                           {cek.jumlah_tersedia_cek}
                         </span>
                       </td>
+
+                      {/* Pengecek */}
                       <td className="px-4 py-3 hidden md:table-cell">
                         <div className="flex items-center gap-2">
                           <User size={14} className="text-gray-400" />
@@ -483,6 +534,8 @@ const DetailBarang = () => {
                           </span>
                         </div>
                       </td>
+
+                      {/* Catatan */}
                       <td className="px-4 py-3 hidden md:table-cell">
                         <span className="text-sm text-gray-500 dark:text-gray-400">
                           {cek.catatan || '-'}
@@ -500,6 +553,8 @@ const DetailBarang = () => {
       {/* ============================================
           DIALOG KONFIRMASI
           ============================================ */}
+      
+      {/* Konfirmasi Tandai Hilang */}
       <ConfirmDialog
         isOpen={confirmAction === 'hilang'}
         onClose={() => setConfirmAction(null)}
@@ -511,6 +566,7 @@ const DetailBarang = () => {
         loading={actionLoading}
       />
 
+      {/* Konfirmasi Selesaikan */}
       <ConfirmDialog
         isOpen={confirmAction === 'selesai'}
         onClose={() => setConfirmAction(null)}
