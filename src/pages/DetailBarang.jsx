@@ -22,7 +22,23 @@ import {
   User,
   Calendar,
   FileText,
+  Image as ImageIcon,
 } from 'lucide-react';
+
+// ============================================
+// HELPER: Dapatkan URL gambar yang benar
+// ============================================
+const getImageUrl = (item) => {
+  // Gunakan foto_url dari accessor Laravel jika ada
+  if (item?.foto_url) return item.foto_url;
+  
+  // Fallback: buat manual jika hanya ada path foto
+  if (item?.foto) {
+    return `${api.defaults.baseURL.replace('/api', '')}/storage/${item.foto}`;
+  }
+  
+  return null;
+};
 
 const DetailBarang = () => {
   const { id } = useParams();
@@ -34,12 +50,13 @@ const DetailBarang = () => {
   const [pengecekan, setPengecekan] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imgError, setImgError] = useState(false);
 
   // Aksi Loading
   const [actionLoading, setActionLoading] = useState(false);
 
   // Confirm Dialog
-  const [confirmAction, setConfirmAction] = useState(null); // 'hilang' | 'selesai' | null
+  const [confirmAction, setConfirmAction] = useState(null);
 
   // ============================================
   // FETCH DATA
@@ -47,6 +64,7 @@ const DetailBarang = () => {
   const fetchData = async () => {
     setLoading(true);
     setError(null);
+    setImgError(false);
 
     try {
       const response = await api.get(`/barang/${id}`);
@@ -125,6 +143,34 @@ const DetailBarang = () => {
   };
 
   // ============================================
+  // KOMPONEN GAMBAR UTAMA
+  // ============================================
+  const BarangImage = ({ item }) => {
+    const imageUrl = getImageUrl(item);
+
+    if (!imageUrl || imgError) {
+      return (
+        <div className="w-full aspect-[4/3] bg-gray-100 dark:bg-gray-800 flex items-center justify-center rounded-2xl">
+          <div className="text-center">
+            <ImageIcon size={64} className="text-gray-300 dark:text-gray-600 mx-auto mb-2" />
+            <p className="text-sm text-gray-400 dark:text-gray-500">Foto tidak tersedia</p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <img
+        src={imageUrl}
+        alt={item.nama_barang}
+        className="w-full aspect-[4/3] object-cover rounded-2xl"
+        style={{ imageRendering: 'auto' }}
+        onError={() => setImgError(true)}
+      />
+    );
+  };
+
+  // ============================================
   // LOADING STATE
   // ============================================
   if (loading) {
@@ -186,24 +232,14 @@ const DetailBarang = () => {
           KONTEN UTAMA: FOTO + INFO
           ============================================ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Foto */}
+        {/* Foto — DENGAN HANDLING ERROR */}
         <div className="lg:col-span-1">
           <div className="
             bg-white dark:bg-gray-900
             rounded-2xl border border-gray-200 dark:border-gray-700
             overflow-hidden
           ">
-            {barang.foto_url ? (
-              <img
-                src={barang.foto_url}
-                alt={barang.nama_barang}
-                className="w-full aspect-[4/3] object-cover"
-              />
-            ) : (
-              <div className="w-full aspect-[4/3] bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                <Package size={64} className="text-gray-300 dark:text-gray-600" />
-              </div>
-            )}
+            <BarangImage item={barang} />
           </div>
         </div>
 
