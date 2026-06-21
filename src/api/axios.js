@@ -4,7 +4,7 @@ import axios from 'axios';
 
 // Membuat instance axios dengan baseURL API Laravel
 const api = axios.create({
-  baseURL: 'kkn-perlengkapan-api-production.up.railway.app/api',
+  baseURL: 'https://kkn-perlengkapan-api-production.up.railway.app/api',
   headers: {
     Accept: 'application/json',
   },
