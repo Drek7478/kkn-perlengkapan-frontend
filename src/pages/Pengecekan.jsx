@@ -24,12 +24,12 @@ import {
 const getImageUrl = (item) => {
   // Gunakan foto_url dari accessor Laravel jika ada
   if (item?.foto_url) return item.foto_url;
-  
+
   // Fallback: buat manual jika hanya ada path foto
   if (item?.foto) {
     return `${api.defaults.baseURL.replace('/api', '')}/storage/${item.foto}`;
   }
-  
+
   return null;
 };
 
@@ -234,7 +234,7 @@ const Pengecekan = () => {
         p-6
       ">
         <form onSubmit={handleSubmit} className="space-y-5">
-          
+
           {/* ============================================
               PILIH BARANG (DROPDOWN)
               ============================================ */}
@@ -338,6 +338,7 @@ const Pengecekan = () => {
               KONDISI + JUMLAH (2 KOLOM)
               ============================================ */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
             {/* Kondisi Saat Dicek */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -420,6 +421,7 @@ const Pengecekan = () => {
               TOMBOL AKSI
               ============================================ */}
           <div className="flex justify-end gap-3 pt-2">
+            
             {/* Tombol Reset */}
             <button
               type="button"
