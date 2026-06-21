@@ -25,12 +25,12 @@ import {
 const getImageUrl = (item) => {
   // Gunakan foto_url dari accessor Laravel jika ada
   if (item?.foto_url) return item.foto_url;
-  
+
   // Fallback: buat manual jika hanya ada path foto
   if (item?.foto) {
     return `${api.defaults.baseURL.replace('/api', '')}/storage/${item.foto}`;
   }
-  
+
   return null;
 };
 
@@ -298,6 +298,7 @@ const BarangHilang = () => {
 
                   {/* ============================================
                       KOLOM TANGGAL HILANG + JAM (Hidden di Mobile)
+                      DISESUAIKAN DENGAN FORMAT WAKTU YANG SAMA
                       ============================================ */}
                   <td className="px-4 py-3 hidden sm:table-cell">
                     <div className="flex items-center gap-1.5">
@@ -306,7 +307,7 @@ const BarangHilang = () => {
                         <span className="text-sm text-red-600 dark:text-red-400">
                           {formatDate(item.tanggal_hilang)}
                         </span>
-                        {/* JAM HILANG */}
+                        {/* JAM HILANG - DISESUAIKAN */}
                         <span className="text-xs text-red-400 dark:text-red-500 flex items-center gap-1 mt-0.5">
                           <Clock size={11} />
                           {formatDate(item.tanggal_hilang, { withTime: true }).split(', ')[1] || ''}
