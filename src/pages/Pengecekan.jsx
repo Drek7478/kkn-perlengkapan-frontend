@@ -15,7 +15,49 @@ import {
   Package,
   FileText,
   AlertTriangle,
+  Image as ImageIcon,
 } from 'lucide-react';
+
+// ============================================
+// HELPER: Dapatkan URL gambar yang benar
+// ============================================
+const getImageUrl = (item) => {
+  // Gunakan foto_url dari accessor Laravel jika ada
+  if (item?.foto_url) return item.foto_url;
+  
+  // Fallback: buat manual jika hanya ada path foto
+  if (item?.foto) {
+    return `${api.defaults.baseURL.replace('/api', '')}/storage/${item.foto}`;
+  }
+  
+  return null;
+};
+
+// ============================================
+// KOMPONEN GAMBAR (dengan fallback)
+// ============================================
+const BarangImage = ({ item, className = '' }) => {
+  const [imgError, setImgError] = useState(false);
+  const imageUrl = getImageUrl(item);
+
+  if (!imageUrl || imgError) {
+    return (
+      <div className={`bg-gray-100 dark:bg-gray-800 flex items-center justify-center ${className}`}>
+        <ImageIcon size={24} className="text-gray-300 dark:text-gray-600" />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={imageUrl}
+      alt={item.nama_barang}
+      className={className}
+      onError={() => setImgError(true)}
+      style={{ imageRendering: 'auto' }}
+    />
+  );
+};
 
 const Pengecekan = () => {
   const [searchParams] = useSearchParams();
@@ -222,23 +264,16 @@ const Pengecekan = () => {
             )}
           </div>
 
-          {/* Info Barang Terpilih */}
+          {/* Info Barang Terpilih — DENGAN FOTO */}
           {selectedBarang && (
             <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
               <div className="flex items-start gap-3">
                 {/* Foto kecil */}
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-white dark:bg-gray-800 shrink-0">
-                  {selectedBarang.foto_url ? (
-                    <img
-                      src={selectedBarang.foto_url}
-                      alt={selectedBarang.nama_barang}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Package size={24} className="text-gray-400" />
-                    </div>
-                  )}
+                  <BarangImage
+                    item={selectedBarang}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div>
                   <h3 className="font-medium text-gray-900 dark:text-gray-50">
