@@ -22,6 +22,7 @@ import {
   Eye,
   Package,
   Filter,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 // ============================================
@@ -44,6 +45,21 @@ const KONDISI_OPTIONS = [
   { value: 'rusak_berat', label: 'Rusak Berat' },
 ];
 
+// ============================================
+// HELPER: Dapatkan URL gambar yang benar
+// ============================================
+const getImageUrl = (item) => {
+  // Gunakan foto_url dari accessor Laravel jika ada
+  if (item?.foto_url) return item.foto_url;
+  
+  // Fallback: buat manual jika hanya ada path foto
+  if (item?.foto) {
+    return `${api.defaults.baseURL.replace('/api', '')}/storage/${item.foto}`;
+  }
+  
+  return null;
+};
+
 const Barang = () => {
   const toast = useToast();
 
@@ -59,7 +75,7 @@ const Barang = () => {
   const [search, setSearch] = useState('');
   const [filterKategori, setFilterKategori] = useState('');
   const [filterKondisi, setFilterKondisi] = useState('');
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' atau 'table'
+  const [viewMode, setViewMode] = useState('grid');
 
   // Modal Tambah
   const [showAddModal, setShowAddModal] = useState(false);
@@ -77,7 +93,7 @@ const Barang = () => {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  // Form State (untuk tambah & edit)
+  // Form State
   const [form, setForm] = useState({
     nama_barang: '',
     kategori: '',
@@ -272,7 +288,34 @@ const Barang = () => {
   };
 
   // ============================================
-  // RENDER: FORM BARANG (untuk Tambah & Edit)
+  // KOMPONEN GAMBAR (dengan fallback)
+  // ============================================
+  const BarangImage = ({ item, className = '' }) => {
+    const [imgError, setImgError] = useState(false);
+    const imageUrl = getImageUrl(item);
+
+    if (!imageUrl || imgError) {
+      return (
+        <div className={`bg-gray-100 dark:bg-gray-800 flex items-center justify-center ${className}`}>
+          <ImageIcon size={40} className="text-gray-300 dark:text-gray-600" />
+        </div>
+      );
+    }
+
+    return (
+      <img
+        src={imageUrl}
+        alt={item.nama_barang}
+        className={className}
+        loading="lazy"
+        onError={() => setImgError(true)}
+        style={{ imageRendering: 'auto' }}
+      />
+    );
+  };
+
+  // ============================================
+  // RENDER: FORM BARANG
   // ============================================
   const renderForm = (errors, isEdit = false) => (
     <form onSubmit={isEdit ? handleEdit : handleAdd} className="space-y-4">
@@ -494,22 +537,15 @@ const Barang = () => {
             rounded-xl border border-gray-200 dark:border-gray-700
             shadow-sm hover:shadow-md
             transition-all duration-200
-            group
+            group overflow-hidden
           "
         >
-          {/* Foto */}
-          <div className="aspect-[4/3] bg-gray-100 dark:bg-gray-800 rounded-t-xl overflow-hidden relative">
-            {item.foto_url ? (
-              <img
-                src={item.foto_url}
-                alt={item.nama_barang}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <Package size={48} className="text-gray-300 dark:text-gray-600" />
-              </div>
-            )}
+          {/* Foto — PASTIKAN ASPEK RASIO & OBJECT-COVER */}
+          <div className="aspect-[4/3] bg-gray-100 dark:bg-gray-800 relative overflow-hidden">
+            <BarangImage
+              item={item}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
 
             {/* Overlay Aksi (muncul saat hover) */}
             <div className="
@@ -612,16 +648,13 @@ const Barang = () => {
                 key={item.id}
                 className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
               >
-                {/* Foto */}
+                {/* Foto — Thumbnail kecil */}
                 <td className="px-4 py-3">
-                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
-                    {item.foto_url ? (
-                      <img src={item.foto_url} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Package size={16} className="text-gray-400" />
-                      </div>
-                    )}
+                  <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+                    <BarangImage
+                      item={item}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 </td>
 
@@ -700,9 +733,7 @@ const Barang = () => {
   // ============================================
   return (
     <div className="space-y-6">
-      {/* ============================================
-          HEADER: JUDUL + TOMBOL TAMBAH
-          ============================================ */}
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">
@@ -732,9 +763,7 @@ const Barang = () => {
         </button>
       </div>
 
-      {/* ============================================
-          TOOLBAR: SEARCH + FILTER + TOGGLE VIEW
-          ============================================ */}
+      {/* Toolbar */}
       <div className="
         bg-white dark:bg-gray-900
         rounded-2xl border border-gray-200 dark:border-gray-700
@@ -832,9 +861,7 @@ const Barang = () => {
         </div>
       </div>
 
-      {/* ============================================
-          KONTEN: GRID / TABEL / EMPTY / LOADING
-          ============================================ */}
+      {/* Konten */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
           <Spinner size="lg" />
@@ -870,9 +897,7 @@ const Barang = () => {
         renderTableView()
       )}
 
-      {/* ============================================
-          MODAL TAMBAH BARANG
-          ============================================ */}
+      {/* Modal Tambah */}
       <Modal
         isOpen={showAddModal}
         onClose={() => {
@@ -885,9 +910,7 @@ const Barang = () => {
         {renderForm(addErrors, false)}
       </Modal>
 
-      {/* ============================================
-          MODAL EDIT BARANG
-          ============================================ */}
+      {/* Modal Edit */}
       <Modal
         isOpen={showEditModal}
         onClose={() => {
@@ -901,9 +924,7 @@ const Barang = () => {
         {renderForm(editErrors, true)}
       </Modal>
 
-      {/* ============================================
-          DIALOG KONFIRMASI HAPUS
-          ============================================ */}
+      {/* Dialog Hapus */}
       <ConfirmDialog
         isOpen={showDeleteDialog}
         onClose={() => {
