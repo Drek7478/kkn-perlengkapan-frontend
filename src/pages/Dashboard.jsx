@@ -235,7 +235,7 @@ const Dashboard = () => {
                       group
                     "
                   >
-                    {/* Foto / Placeholder — DENGAN FALLBACK */}
+                    {/* Foto / Placeholder */}
                     <BarangThumbnail item={barang} />
 
                     {/* Info */}
@@ -243,13 +243,15 @@ const Dashboard = () => {
                       <p className="text-sm font-medium text-gray-900 dark:text-gray-50 truncate">
                         {barang.nama_barang}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Terakhir dicek: {formatDate(barang.last_checked_at, { emptyText: 'Belum pernah' })}
+                      {/* TANGGAL + JAM TERAKHIR DICEK */}
+                      <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-0.5">
+                        <Clock size={11} />
+                        Terakhir dicek: {formatDate(barang.last_checked_at, { withTime: true, emptyText: 'Belum pernah' })}
                       </p>
                     </div>
 
                     {/* Icon Arrow */}
-                    <ArrowRight size={16} className="text-gray-300 dark:text-gray-600 group-hover:text-blue-500 transition-colors" />
+                    <ArrowRight size={16} className="text-gray-300 dark:text-gray-600 group-hover:text-blue-500 transition-colors shrink-0" />
                   </Link>
                 ))}
               </div>
@@ -312,15 +314,17 @@ const Dashboard = () => {
 
                     {/* Konten */}
                     <div className="flex-1 pb-4">
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
                         <span className={`
                           px-2 py-0.5 rounded-full text-xs font-medium
                           ${getKondisiBadge(cek.kondisi_cek)}
                         `}>
                           {getKondisiLabel(cek.kondisi_cek)}
                         </span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {formatDate(cek.tanggal_cek)} oleh {cek.user?.name || 'Admin'}
+                        {/* TANGGAL + JAM PENGECEKAN */}
+                        <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                          <Clock size={11} />
+                          {formatDate(cek.tanggal_cek, { withTime: true })} oleh {cek.user?.name || 'Admin'}
                         </span>
                       </div>
                       <Link
