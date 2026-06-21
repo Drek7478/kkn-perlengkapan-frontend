@@ -17,7 +17,49 @@ import {
   Calendar,
   FileText,
   CheckCircle,
+  Image as ImageIcon,
 } from 'lucide-react';
+
+// ============================================
+// HELPER: Dapatkan URL gambar yang benar
+// ============================================
+const getImageUrl = (item) => {
+  // Gunakan foto_url dari accessor Laravel jika ada
+  if (item?.foto_url) return item.foto_url;
+  
+  // Fallback: buat manual jika hanya ada path foto
+  if (item?.foto) {
+    return `${api.defaults.baseURL.replace('/api', '')}/storage/${item.foto}`;
+  }
+  
+  return null;
+};
+
+// ============================================
+// KOMPONEN GAMBAR (dengan fallback)
+// ============================================
+const BarangImage = ({ item, className = '' }) => {
+  const [imgError, setImgError] = useState(false);
+  const imageUrl = getImageUrl(item);
+
+  if (!imageUrl || imgError) {
+    return (
+      <div className={`bg-gray-100 dark:bg-gray-800 flex items-center justify-center ${className}`}>
+        <ImageIcon size={20} className="text-gray-300 dark:text-gray-600" />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={imageUrl}
+      alt={item.nama_barang}
+      className={className}
+      onError={() => setImgError(true)}
+      style={{ imageRendering: 'auto' }}
+    />
+  );
+};
 
 const BarangHilang = () => {
   const toast = useToast();
@@ -196,20 +238,13 @@ const BarangHilang = () => {
                   key={item.id}
                   className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                 >
-                  {/* Foto */}
+                  {/* Foto — DENGAN FALLBACK */}
                   <td className="px-4 py-3">
                     <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
-                      {item.foto_url ? (
-                        <img
-                          src={item.foto_url}
-                          alt={item.nama_barang}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Package size={20} className="text-gray-400" />
-                        </div>
-                      )}
+                      <BarangImage
+                        item={item}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   </td>
 
