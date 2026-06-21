@@ -9,13 +9,12 @@ import { getKondisiBadge, getKondisiLabel } from '../utils/badgeHelper';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import EmptyState from '../components/ui/EmptyState';
 import Spinner from '../components/ui/Spinner';
-import Badge from '../components/ui/Badge';
 import {
   Package,
   AlertTriangle,
   RotateCcw,
   Calendar,
-  FileText,
+  Clock,
   CheckCircle,
   Image as ImageIcon,
 } from 'lucide-react';
@@ -64,19 +63,21 @@ const BarangImage = ({ item, className = '' }) => {
 const BarangHilang = () => {
   const toast = useToast();
 
-  // State
+  // ============================================
+  // STATE
+  // ============================================
   const [barangHilang, setBarangHilang] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [total, setTotal] = useState(0);
 
-  // Pulihkan
+  // State untuk Dialog Pulihkan
   const [showPulihkanDialog, setShowPulihkanDialog] = useState(false);
   const [pulihkanTarget, setPulihkanTarget] = useState(null);
   const [pulihkanLoading, setPulihkanLoading] = useState(false);
 
   // ============================================
-  // FETCH DATA
+  // FETCH DATA BARANG HILANG
   // ============================================
   const fetchBarangHilang = useCallback(async () => {
     setLoading(true);
@@ -94,12 +95,13 @@ const BarangHilang = () => {
     }
   }, []);
 
+  // Fetch data saat halaman pertama dibuka
   useEffect(() => {
     fetchBarangHilang();
   }, [fetchBarangHilang]);
 
   // ============================================
-  // PULIHKAN BARANG
+  // HANDLE PULIHKAN BARANG
   // ============================================
   const openPulihkanDialog = (item) => {
     setPulihkanTarget(item);
@@ -116,7 +118,7 @@ const BarangHilang = () => {
       toast.success(`${pulihkanTarget.nama_barang} berhasil dipulihkan!`);
       setShowPulihkanDialog(false);
       setPulihkanTarget(null);
-      fetchBarangHilang();
+      fetchBarangHilang(); // Refresh data
     } catch (err) {
       toast.error('Gagal memulihkan barang.');
     } finally {
@@ -141,7 +143,13 @@ const BarangHilang = () => {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
+        <div className="w-20 h-20 rounded-2xl bg-red-100 dark:bg-red-900/40 flex items-center justify-center mb-6">
+          <AlertTriangle size={40} className="text-red-600 dark:text-red-400" />
+        </div>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-50 mb-2">
+          Gagal Memuat Data
+        </h2>
+        <p className="text-gray-500 dark:text-gray-400 mb-4">{error}</p>
         <button
           onClick={fetchBarangHilang}
           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
@@ -153,11 +161,12 @@ const BarangHilang = () => {
   }
 
   // ============================================
-  // EMPTY STATE
+  // EMPTY STATE (Tidak ada barang hilang)
   // ============================================
   if (barangHilang.length === 0) {
     return (
       <div className="space-y-6">
+        {/* Header */}
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">
             Barang Hilang
@@ -167,6 +176,7 @@ const BarangHilang = () => {
           </p>
         </div>
 
+        {/* Empty State */}
         <EmptyState
           title="Tidak ada barang hilang"
           description="Semua barang dalam keadaan aman. Barang yang ditandai hilang akan muncul di sini."
@@ -177,11 +187,13 @@ const BarangHilang = () => {
   }
 
   // ============================================
-  // RENDER
+  // RENDER UTAMA: TABEL BARANG HILANG
   // ============================================
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* ============================================
+          HEADER: JUDUL + BADGE JUMLAH
+          ============================================ */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">
@@ -191,10 +203,13 @@ const BarangHilang = () => {
             {total} barang ditandai sebagai hilang
           </p>
         </div>
+
+        {/* Badge Jumlah Hilang */}
         <span className="
           inline-flex items-center gap-2
           px-3 py-1.5 rounded-full
-          bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300
+          bg-red-100 text-red-800
+          dark:bg-red-900/40 dark:text-red-300
           text-sm font-medium
         ">
           <AlertTriangle size={16} />
@@ -202,7 +217,9 @@ const BarangHilang = () => {
         </span>
       </div>
 
-      {/* Tabel */}
+      {/* ============================================
+          TABEL DATA BARANG HILANG
+          ============================================ */}
       <div className="
         bg-white dark:bg-gray-900
         rounded-2xl border border-gray-200 dark:border-gray-700
@@ -210,6 +227,7 @@ const BarangHilang = () => {
       ">
         <div className="overflow-x-auto">
           <table className="w-full">
+            {/* Header Tabel */}
             <thead>
               <tr className="bg-gray-50 dark:bg-gray-800">
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -232,13 +250,17 @@ const BarangHilang = () => {
                 </th>
               </tr>
             </thead>
+
+            {/* Body Tabel */}
             <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
               {barangHilang.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                 >
-                  {/* Foto — DENGAN FALLBACK */}
+                  {/* ============================================
+                      KOLOM FOTO
+                      ============================================ */}
                   <td className="px-4 py-3">
                     <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
                       <BarangImage
@@ -248,7 +270,9 @@ const BarangHilang = () => {
                     </div>
                   </td>
 
-                  {/* Nama Barang */}
+                  {/* ============================================
+                      KOLOM NAMA BARANG + KETERANGAN
+                      ============================================ */}
                   <td className="px-4 py-3">
                     <Link
                       to={`/barang/${item.id}`}
@@ -263,31 +287,46 @@ const BarangHilang = () => {
                     )}
                   </td>
 
-                  {/* Kategori */}
+                  {/* ============================================
+                      KOLOM KATEGORI (Hidden di Mobile)
+                      ============================================ */}
                   <td className="px-4 py-3 hidden md:table-cell">
                     <span className="text-sm text-gray-500 dark:text-gray-400">
                       {item.kategori}
                     </span>
                   </td>
 
-                  {/* Tanggal Hilang */}
+                  {/* ============================================
+                      KOLOM TANGGAL HILANG + JAM (Hidden di Mobile)
+                      ============================================ */}
                   <td className="px-4 py-3 hidden sm:table-cell">
                     <div className="flex items-center gap-1.5">
                       <Calendar size={14} className="text-red-400" />
-                      <span className="text-sm text-red-600 dark:text-red-400">
-                        {formatDate(item.tanggal_hilang)}
-                      </span>
+                      <div>
+                        <span className="text-sm text-red-600 dark:text-red-400">
+                          {formatDate(item.tanggal_hilang)}
+                        </span>
+                        {/* JAM HILANG */}
+                        <span className="text-xs text-red-400 dark:text-red-500 flex items-center gap-1 mt-0.5">
+                          <Clock size={11} />
+                          {formatDate(item.tanggal_hilang, { withTime: true }).split(', ')[1] || ''}
+                        </span>
+                      </div>
                     </div>
                   </td>
 
-                  {/* Kondisi Terakhir */}
+                  {/* ============================================
+                      KOLOM KONDISI TERAKHIR (Hidden di Mobile)
+                      ============================================ */}
                   <td className="px-4 py-3 hidden lg:table-cell">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getKondisiBadge(item.kondisi)}`}>
                       {getKondisiLabel(item.kondisi)}
                     </span>
                   </td>
 
-                  {/* Aksi: Pulihkan */}
+                  {/* ============================================
+                      KOLOM AKSI: TOMBOL PULIHKAN
+                      ============================================ */}
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => openPulihkanDialog(item)}
@@ -311,7 +350,9 @@ const BarangHilang = () => {
         </div>
       </div>
 
-      {/* Dialog Konfirmasi Pulihkan */}
+      {/* ============================================
+          DIALOG KONFIRMASI PULIHKAN
+          ============================================ */}
       <ConfirmDialog
         isOpen={showPulihkanDialog}
         onClose={() => {
