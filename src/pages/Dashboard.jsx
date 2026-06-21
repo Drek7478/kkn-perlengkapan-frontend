@@ -17,7 +17,6 @@ import {
   Archive,
   Clock,
   ArrowRight,
-  Image as ImageIcon,
 } from 'lucide-react';
 
 // ============================================
@@ -26,12 +25,12 @@ import {
 const getImageUrl = (item) => {
   // Gunakan foto_url dari accessor Laravel jika ada
   if (item?.foto_url) return item.foto_url;
-  
+
   // Fallback: buat manual jika hanya ada path foto
   if (item?.foto) {
     return `${api.defaults.baseURL.replace('/api', '')}/storage/${item.foto}`;
   }
-  
+
   return null;
 };
 
@@ -186,7 +185,7 @@ const Dashboard = () => {
           DUA KOLOM: PERLU DICEK + AKTIVITAS
           ============================================ */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
+
         {/* ============================================
             KIRI: BARANG PERLU DICEK (> 3 HARI)
             ============================================ */}
