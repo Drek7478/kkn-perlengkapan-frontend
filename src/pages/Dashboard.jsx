@@ -17,7 +17,49 @@ import {
   Archive,
   Clock,
   ArrowRight,
+  Image as ImageIcon,
 } from 'lucide-react';
+
+// ============================================
+// HELPER: Dapatkan URL gambar yang benar
+// ============================================
+const getImageUrl = (item) => {
+  // Gunakan foto_url dari accessor Laravel jika ada
+  if (item?.foto_url) return item.foto_url;
+  
+  // Fallback: buat manual jika hanya ada path foto
+  if (item?.foto) {
+    return `${api.defaults.baseURL.replace('/api', '')}/storage/${item.foto}`;
+  }
+  
+  return null;
+};
+
+// ============================================
+// KOMPONEN GAMBAR KECIL (dengan fallback)
+// ============================================
+const BarangThumbnail = ({ item }) => {
+  const [imgError, setImgError] = useState(false);
+  const imageUrl = getImageUrl(item);
+
+  if (!imageUrl || imgError) {
+    return (
+      <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0">
+        <Package size={20} className="text-gray-400" />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={imageUrl}
+      alt={item.nama_barang}
+      className="w-12 h-12 rounded-lg object-cover shrink-0"
+      onError={() => setImgError(true)}
+      style={{ imageRendering: 'auto' }}
+    />
+  );
+};
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -193,20 +235,8 @@ const Dashboard = () => {
                       group
                     "
                   >
-                    {/* Foto / Placeholder */}
-                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 shrink-0">
-                      {barang.foto_url ? (
-                        <img
-                          src={barang.foto_url}
-                          alt={barang.nama_barang}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Package size={20} className="text-gray-400" />
-                        </div>
-                      )}
-                    </div>
+                    {/* Foto / Placeholder — DENGAN FALLBACK */}
+                    <BarangThumbnail item={barang} />
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
