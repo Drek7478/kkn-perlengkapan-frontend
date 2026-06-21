@@ -13,8 +13,8 @@ import {
   CheckCircle,
   Calendar,
   Package,
-  FileText,
   AlertTriangle,
+  Clock,
   Image as ImageIcon,
 } from 'lucide-react';
 
@@ -144,7 +144,7 @@ const Pengecekan = () => {
     setErrors({});
 
     try {
-      const response = await api.post('/pengecekan', {
+      await api.post('/pengecekan', {
         barang_id: form.barang_id,
         tanggal_cek: form.tanggal_cek,
         kondisi_cek: form.kondisi_cek,
@@ -213,7 +213,9 @@ const Pengecekan = () => {
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
-      {/* Header */}
+      {/* ============================================
+          HEADER
+          ============================================ */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">
           Pengecekan Barang
@@ -223,7 +225,9 @@ const Pengecekan = () => {
         </p>
       </div>
 
-      {/* Form Card */}
+      {/* ============================================
+          FORM CARD
+          ============================================ */}
       <div className="
         bg-white dark:bg-gray-900
         rounded-2xl border border-gray-200 dark:border-gray-700
@@ -231,7 +235,9 @@ const Pengecekan = () => {
       ">
         <form onSubmit={handleSubmit} className="space-y-5">
           
-          {/* Pilih Barang */}
+          {/* ============================================
+              PILIH BARANG (DROPDOWN)
+              ============================================ */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Pilih Barang <span className="text-red-500">*</span>
@@ -264,7 +270,9 @@ const Pengecekan = () => {
             )}
           </div>
 
-          {/* Info Barang Terpilih — DENGAN FOTO */}
+          {/* ============================================
+              INFO BARANG TERPILIH
+              ============================================ */}
           {selectedBarang && (
             <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
               <div className="flex items-start gap-3">
@@ -275,11 +283,11 @@ const Pengecekan = () => {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div>
+                <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-gray-900 dark:text-gray-50">
                     {selectedBarang.nama_barang}
                   </h3>
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className="flex flex-wrap items-center gap-2 mt-1">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getKondisiBadge(selectedBarang.kondisi)}`}>
                       {getKondisiLabel(selectedBarang.kondisi)}
                     </span>
@@ -287,15 +295,19 @@ const Pengecekan = () => {
                       Jumlah: {selectedBarang.jumlah_tersedia}/{selectedBarang.jumlah_total}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Terakhir dicek: {formatDate(selectedBarang.last_checked_at, { emptyText: 'Belum pernah' })}
+                  {/* TANGGAL + JAM TERAKHIR DICEK */}
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1">
+                    <Clock size={11} />
+                    Terakhir dicek: {formatDate(selectedBarang.last_checked_at, { withTime: true, emptyText: 'Belum pernah' })}
                   </p>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Tanggal Cek */}
+          {/* ============================================
+              TANGGAL PENGECEKAN
+              ============================================ */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Tanggal Pengecekan <span className="text-red-500">*</span>
@@ -322,9 +334,11 @@ const Pengecekan = () => {
             )}
           </div>
 
-          {/* Kondisi + Jumlah (2 kolom) */}
+          {/* ============================================
+              KONDISI + JUMLAH (2 KOLOM)
+              ============================================ */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Kondisi */}
+            {/* Kondisi Saat Dicek */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Kondisi Saat Dicek <span className="text-red-500">*</span>
@@ -351,7 +365,7 @@ const Pengecekan = () => {
               )}
             </div>
 
-            {/* Jumlah Tersedia */}
+            {/* Jumlah Tersedia Saat Dicek */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Jumlah Tersedia Saat Dicek <span className="text-red-500">*</span>
@@ -378,7 +392,9 @@ const Pengecekan = () => {
             </div>
           </div>
 
-          {/* Catatan */}
+          {/* ============================================
+              CATATAN
+              ============================================ */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Catatan
@@ -400,8 +416,11 @@ const Pengecekan = () => {
             />
           </div>
 
-          {/* Tombol Submit */}
+          {/* ============================================
+              TOMBOL AKSI
+              ============================================ */}
           <div className="flex justify-end gap-3 pt-2">
+            {/* Tombol Reset */}
             <button
               type="button"
               onClick={() => {
@@ -425,6 +444,8 @@ const Pengecekan = () => {
             >
               Reset
             </button>
+
+            {/* Tombol Simpan */}
             <button
               type="submit"
               disabled={submitting}
@@ -453,7 +474,9 @@ const Pengecekan = () => {
         </form>
       </div>
 
-      {/* Info: Barang Perlu Dicek */}
+      {/* ============================================
+          TIPS PENGECEKAN
+          ============================================ */}
       <div className="
         bg-amber-50 dark:bg-amber-900/20
         border border-amber-200 dark:border-amber-800
