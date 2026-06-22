@@ -24,12 +24,15 @@ import {
 // HELPER: Dapatkan URL gambar yang benar
 // ============================================
 const getImageUrl = (item) => {
-  // Gunakan foto_url dari accessor Laravel jika ada
-  if (item?.foto_url) return item.foto_url;
+  if (item?.foto_url) {
+    const cacheBuster = item.updated_at ? `?v=${new Date(item.updated_at).getTime()}` : '';
+    return item.foto_url + cacheBuster;
+  }
   
-  // Fallback: buat manual jika hanya ada path foto
   if (item?.foto) {
-    return `${api.defaults.baseURL.replace('/api', '')}/storage/${item.foto}`;
+    const baseUrl = api.defaults.baseURL.replace('/api', '');
+    const cacheBuster = item.updated_at ? `?v=${new Date(item.updated_at).getTime()}` : '';
+    return `${baseUrl}/storage/${item.foto}${cacheBuster}`;
   }
   
   return null;
