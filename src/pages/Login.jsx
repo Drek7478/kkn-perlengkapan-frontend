@@ -341,8 +341,8 @@ const Login = () => {
             </button>
           </div>
 
-          {/* HEADER CARD — Ikon + Judul + Subtitle — DIPERBAIKI: text-center + px-2 */}
-          <div className="text-center mb-8 pl-4">
+          {/* HEADER CARD — Ikon + Judul + Subtitle — DIPERBAIKI: text-center tanpa pl-4 */}
+          <div className="text-center mb-8">
             {/* Ikon Package — Pop in + Pulse terus */}
             <div className="kkn-pop-in kkn-d-4 flex justify-center mb-5">
               <div
@@ -353,13 +353,13 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Judul Form — Reveal up (t=0.5s) + text-center */}
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-50 mb-1 kkn-reveal-up kkn-d-5 text-center">
+            {/* Judul Form — Reveal up (t=0.5s) */}
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-50 mb-1 kkn-reveal-up kkn-d-5">
               Masuk ke Sistem
             </h2>
 
-            {/* Subtitle Form — Reveal up (t=0.6s) + text-center */}
-            <p className="text-sm text-gray-400 dark:text-gray-500 kkn-reveal-up kkn-d-6 text-center">
+            {/* Subtitle Form — Reveal up (t=0.6s) */}
+            <p className="text-sm text-gray-400 dark:text-gray-500 kkn-reveal-up kkn-d-6">
               Masukkan kredensial akun admin Anda
             </p>
           </div>
