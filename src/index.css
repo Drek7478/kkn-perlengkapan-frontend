@@ -582,3 +582,124 @@ body {
     margin: 1.5rem auto;
   }
 }
+
+/* =============================================
+   FLOATING CARD STYLES - RESTRUKTUR TOTAL LOGIN
+   ============================================= */
+
+/* --- FLOATING CARD UTAMA --- */
+.kkn-float-card {
+  width: 100%;
+  max-width: 1024px;
+  border-radius: 2rem;
+  overflow: hidden;
+  background: white;
+}
+
+.dark .kkn-float-card {
+  background: #111827;
+}
+
+/* --- KOLOM KIRI CARD (BRANDING) --- */
+.kkn-card-brand {
+  background: linear-gradient(145deg, #0f2460 0%, #1d4ed8 55%, #3730a3 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 320px;
+}
+
+/* --- KOLOM KANAN CARD (FORM) --- */
+.kkn-card-form {
+  padding: 2.5rem 2rem;
+  background: white;
+}
+
+.dark .kkn-card-form {
+  background: #111827;
+}
+
+/* --- INPUT PILL STYLE --- */
+.kkn-input-pill {
+  border-radius: 9999px !important;
+  border: 2px solid transparent !important;
+  background-color: #f3f4f6 !important;
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+  transition: all 0.2s ease;
+}
+
+.dark .kkn-input-pill {
+  background-color: #1f2937 !important;
+}
+
+.kkn-input-pill:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15) !important;
+  background-color: white !important;
+}
+
+.dark .kkn-input-pill:focus {
+  background-color: #1f2937 !important;
+}
+
+/* --- TOMBOL SUBMIT PILIHAN (rounded-full) --- */
+.kkn-btn-pill {
+  border-radius: 9999px !important;
+}
+
+/* --- ORB DEKORATIF DI CARD BRAND --- */
+.kkn-brand-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* --- RESPONSIVE: Mobile --- */
+@media (max-width: 1023px) {
+  .kkn-float-card {
+    border-radius: 2rem;
+    max-width: 100%;
+    margin: 0;
+  }
+  
+  .kkn-card-brand {
+    padding: 1.75rem 1.5rem;
+    min-height: auto;
+    border-radius: 2rem 2rem 0 0;
+  }
+  
+  .kkn-card-form {
+    padding: 1.75rem 1.5rem;
+    border-radius: 0 0 2rem 2rem;
+  }
+}
+
+/* --- DESKTOP: KOLOM BRAND FULL --- */
+@media (min-width: 1024px) {
+  .kkn-float-card {
+    margin: 0;
+  }
+  
+  .kkn-card-brand {
+    padding: 3rem 2.5rem;
+    min-height: 480px;
+    border-radius: 2rem 0 0 2rem;
+  }
+  
+  .kkn-card-form {
+    padding: 3rem 2.5rem;
+    border-radius: 0 2rem 2rem 0;
+  }
+}
+
+/* --- RESPONSIVE: Tablet (768-1023px) --- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .kkn-float-card {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+}
