@@ -137,7 +137,7 @@ const Login = () => {
           </p>
         </div>
 
-        {/* DAFTAR FITUR — Bounce dari kiri satu per satu (STATIS, BUKAN DINAMIS) */}
+        {/* DAFTAR FITUR — Bounce dari kiri satu per satu (STATIS) */}
         <div className="relative z-10 space-y-3">
           {/* Fitur 1 — delay 0.9s */}
           <div
@@ -205,11 +205,12 @@ const Login = () => {
       </div>
 
       {/* ============================================================
-          PANEL KANAN — FORM LOGIN (MOBILE: HERO + BOTTOM SHEET)
+          PANEL KANAN — FORM LOGIN
+          ⚠️ BUG 1 FIX: flex-1 dihapus → tinggi mengikuti konten natural
           ============================================================ */}
-      <div className="flex-1 flex flex-col lg:items-center lg:justify-center lg:px-12 lg:py-12 relative kkn-bg-right">
+      <div className="flex flex-col lg:flex-1 lg:items-center lg:justify-center lg:px-12 lg:py-12 relative kkn-bg-right">
 
-        {/* BLOB DEKORATIF PANEL KANAN — Blur besar, opacity rendah */}
+        {/* BLOB DEKORATIF PANEL KANAN — Blur besar, opacity rendah (desktop only) */}
         <div
           className="hidden lg:block absolute -top-32 -right-20 w-72 h-72 rounded-full blur-3xl pointer-events-none"
           style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%)' }}
@@ -315,16 +316,17 @@ const Login = () => {
         </div>
 
         {/* ============================================================
-            CARD FORM LOGIN — GLASS + GLOW + OVERLAP
+            CARD FORM LOGIN — GLASS + GLOW + BOTTOM SHEET
+            ⚠️ BUG 2 FIX: rounded-3xl dihapus → hanya kkn-bottom-sheet yang mengatur radius
             ============================================================ */}
         <div
           className={`
             w-full max-w-md
             kkn-glass-card
-            rounded-3xl
             p-7 sm:p-8
             kkn-card-entrance kkn-d-3 kkn-card-shadow
             kkn-bottom-sheet
+            lg:rounded-3xl
             lg:kkn-card-overlap
           `}
         >
