@@ -357,7 +357,6 @@ const Pengecekan = () => {
                   ${errors.kondisi_cek ? 'border-red-300 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'}
                 `}
               >
-                <option value="">-- Pilih Kondisi --</option>
                 <option value="baik">Baik</option>
                 <option value="rusak_ringan">Rusak Ringan</option>
                 <option value="rusak_berat">Rusak Berat</option>
