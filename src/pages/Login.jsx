@@ -342,7 +342,7 @@ const Login = () => {
           </div>
 
           {/* HEADER CARD — Ikon + Judul + Subtitle — DIPERBAIKI: text-center + px-2 */}
-          <div className="text-center mb-8 px-2">
+          <div className="text-center mb-8 pl-4">
             {/* Ikon Package — Pop in + Pulse terus */}
             <div className="kkn-pop-in kkn-d-4 flex justify-center mb-5">
               <div
