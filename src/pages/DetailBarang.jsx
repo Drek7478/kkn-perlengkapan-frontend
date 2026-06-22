@@ -505,7 +505,7 @@ const DetailBarang = () => {
                             </span>
                             <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-0.5">
                               <Clock size={11} />
-                              {formatDate(cek.tanggal_cek, { withTime: true }).split(', ')[1] || ''}
+                              {formatDate(cek.tanggal_cek).split(', ')[1] || ''}
                             </span>
                           </div>
                         </div>
