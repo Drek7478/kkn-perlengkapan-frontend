@@ -323,7 +323,7 @@ const Dashboard = () => {
                         {/* TANGGAL + JAM PENGECEKAN */}
                         <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
                           <Clock size={11} />
-                          {formatDate(cek.tanggal_cek, { withTime: true })} oleh {cek.user?.name || 'Admin'}
+                          {formatDate(cek.tanggal_cek)} oleh {cek.user?.name || 'Admin'}
                         </span>
                       </div>
                       <Link
