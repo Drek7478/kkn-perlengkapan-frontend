@@ -1,10 +1,10 @@
 // File: src/components/ui/FotoUpload.jsx
 
 import { useState, useRef } from 'react';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Upload, X, Image as ImageIcon, Camera } from 'lucide-react';
 
 /**
- * Komponen Upload Foto dengan Drag & Drop + Preview
+ * Komponen Upload Foto dengan Drag & Drop + Preview + Kamera
  * 
  * @param {File|null} file - File yang dipilih
  * @param {function} onChange - Callback saat file dipilih
@@ -18,9 +18,10 @@ import { Upload, X, Image as ImageIcon } from 'lucide-react';
 const FotoUpload = ({ file, onChange, existingFotoUrl = null, error = '' }) => {
   const [preview, setPreview] = useState(existingFotoUrl || null);
   const [isDragging, setIsDragging] = useState(false);
-  const inputRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
 
-  // Handle file selection
+  // Handle file selection (dari galeri atau drag-drop)
   const handleFile = (selectedFile) => {
     // Validasi tipe file
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
@@ -41,13 +42,26 @@ const FotoUpload = ({ file, onChange, existingFotoUrl = null, error = '' }) => {
     onChange(selectedFile);
   };
 
-  // Handle click (buka file dialog)
-  const handleClick = () => {
-    inputRef.current?.click();
+  // Handle click (buka file dialog / galeri)
+  const handleClickGaleri = () => {
+    fileInputRef.current?.click();
   };
 
-  // Handle input change
+  // Handle click (buka kamera)
+  const handleClickKamera = () => {
+    cameraInputRef.current?.click();
+  };
+
+  // Handle input change dari galeri
   const handleInputChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      handleFile(selectedFile);
+    }
+  };
+
+  // Handle input change dari kamera
+  const handleCameraChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       handleFile(selectedFile);
@@ -79,8 +93,11 @@ const FotoUpload = ({ file, onChange, existingFotoUrl = null, error = '' }) => {
   const handleRemove = () => {
     setPreview(null);
     onChange(null);
-    if (inputRef.current) {
-      inputRef.current.value = '';
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    if (cameraInputRef.current) {
+      cameraInputRef.current.value = '';
     }
   };
 
@@ -95,14 +112,17 @@ const FotoUpload = ({ file, onChange, existingFotoUrl = null, error = '' }) => {
     <div>
       {/* Area Upload / Preview */}
       {preview ? (
+        // ============================================
         // TAMPILAN PREVIEW
+        // ============================================
         <div className="relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
           <img
             src={preview}
             alt="Preview"
             className="w-full h-48 object-cover"
           />
-          {/* Tombol Hapus */}
+          
+          {/* Tombol Hapus (kanan atas) */}
           <button
             type="button"
             onClick={handleRemove}
@@ -113,28 +133,51 @@ const FotoUpload = ({ file, onChange, existingFotoUrl = null, error = '' }) => {
               text-white
               transition-colors
             "
+            title="Hapus Foto"
           >
             <X size={16} />
           </button>
-          {/* Tombol Ganti Foto */}
-          <button
-            type="button"
-            onClick={handleClick}
-            className="
-              absolute bottom-2 left-2
-              px-3 py-1.5 rounded-lg
-              bg-black/50 hover:bg-black/70
-              text-white text-sm
-              transition-colors
-            "
-          >
-            Ganti Foto
-          </button>
+
+          {/* Tombol Ganti Foto (kiri bawah) */}
+          <div className="absolute bottom-2 left-2 flex gap-2">
+            <button
+              type="button"
+              onClick={handleClickGaleri}
+              className="
+                px-3 py-1.5 rounded-lg
+                bg-black/50 hover:bg-black/70
+                text-white text-sm
+                transition-colors
+                flex items-center gap-1.5
+              "
+              title="Pilih dari Galeri"
+            >
+              <ImageIcon size={14} />
+              <span>Galeri</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleClickKamera}
+              className="
+                px-3 py-1.5 rounded-lg
+                bg-black/50 hover:bg-black/70
+                text-white text-sm
+                transition-colors
+                flex items-center gap-1.5
+              "
+              title="Ambil dengan Kamera"
+            >
+              <Camera size={14} />
+              <span>Kamera</span>
+            </button>
+          </div>
         </div>
       ) : (
+        // ============================================
         // TAMPILAN UPLOAD (DRAG & DROP)
+        // ============================================
         <div
-          onClick={handleClick}
+          onClick={handleClickGaleri}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
@@ -163,9 +206,47 @@ const FotoUpload = ({ file, onChange, existingFotoUrl = null, error = '' }) => {
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Klik atau seret foto ke sini
           </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
             JPG, JPEG, PNG • Maksimal 2MB
           </p>
+
+          {/* Dua Tombol: Galeri & Kamera */}
+          <div className="flex items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClickGaleri();
+              }}
+              className="
+                inline-flex items-center gap-1.5
+                px-4 py-2 rounded-lg
+                bg-blue-600 hover:bg-blue-700
+                text-white text-sm font-medium
+                transition-colors
+              "
+            >
+              <ImageIcon size={16} />
+              <span>Galeri</span>
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClickKamera();
+              }}
+              className="
+                inline-flex items-center gap-1.5
+                px-4 py-2 rounded-lg
+                bg-indigo-600 hover:bg-indigo-700
+                text-white text-sm font-medium
+                transition-colors
+              "
+            >
+              <Camera size={16} />
+              <span>Kamera</span>
+            </button>
+          </div>
         </div>
       )}
 
@@ -184,12 +265,22 @@ const FotoUpload = ({ file, onChange, existingFotoUrl = null, error = '' }) => {
         <p className="text-sm text-red-600 dark:text-red-400 mt-1">{error}</p>
       )}
 
-      {/* Hidden Input */}
+      {/* Hidden Input untuk Galeri */}
       <input
-        ref={inputRef}
+        ref={fileInputRef}
         type="file"
         accept="image/jpeg,image/jpg,image/png"
         onChange={handleInputChange}
+        className="hidden"
+      />
+
+      {/* Hidden Input untuk Kamera */}
+      <input
+        ref={cameraInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={handleCameraChange}
         className="hidden"
       />
     </div>
