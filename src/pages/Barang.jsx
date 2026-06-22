@@ -240,7 +240,7 @@ const Barang = () => {
         formData.append('foto', fotoFile);
       }
 
-      await api.post(`/barang/${editData.id}`, formData, {
+      await api.put(`/barang/${editData.id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
