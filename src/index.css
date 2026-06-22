@@ -361,3 +361,84 @@ body {
     animation: none !important;
   }
 }
+
+/* =============================================
+   ENHANCED VISUAL FOUNDATION (GLASS, GLOW, DEPTH)
+   ============================================= */
+
+/* --- GRADIENT BACKGROUND HALUS UNTUK PANEL KANAN (DARK MODE) --- */
+.kkn-bg-right {
+  background: radial-gradient(ellipse at 30% 20%, rgba(99, 102, 241, 0.06) 0%, transparent 55%),
+              radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 55%);
+}
+.dark .kkn-bg-right {
+  background: radial-gradient(ellipse at 30% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 55%),
+              radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 55%),
+              linear-gradient(180deg, #0f172a 0%, #020617 100%);
+}
+
+/* --- CARD GLASSMORPHISM --- */
+.kkn-glass-card {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.dark .kkn-glass-card {
+  background: rgba(17, 24, 39, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* --- CARD GLOW SHADOW BERWARNA --- */
+.kkn-card-shadow {
+  box-shadow:
+    0 25px 70px -15px rgba(99, 102, 241, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+    0 1px 0 rgba(255, 255, 255, 0.8) inset;
+}
+.dark .kkn-card-shadow {
+  box-shadow:
+    0 25px 70px -15px rgba(99, 102, 241, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+/* --- TOMBOL GLOW SHADOW BERWARNA --- */
+.kkn-btn-glow {
+  box-shadow:
+    0 8px 30px -5px rgba(99, 102, 241, 0.5),
+    0 4px 12px -3px rgba(37, 99, 235, 0.3);
+  transition: box-shadow 0.4s ease, transform 0.2s ease, filter 0.2s ease;
+}
+.kkn-btn-glow:hover {
+  box-shadow:
+    0 14px 40px -5px rgba(99, 102, 241, 0.65),
+    0 6px 18px -3px rgba(37, 99, 235, 0.45);
+}
+.dark .kkn-btn-glow {
+  box-shadow:
+    0 8px 30px -5px rgba(99, 102, 241, 0.55),
+    0 4px 12px -3px rgba(79, 70, 229, 0.35);
+}
+.dark .kkn-btn-glow:hover {
+  box-shadow:
+    0 14px 40px -5px rgba(99, 102, 241, 0.7),
+    0 6px 18px -3px rgba(79, 70, 229, 0.5);
+}
+
+/* --- GRADIENT TEXT UNTUK "KKN" --- */
+.kkn-text-gradient {
+  background: linear-gradient(135deg, #93c5fd 0%, #c7d2fe 50%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* --- OVERLAP CARD KE PANEL KIRI (DESKTOP) --- */
+@media (min-width: 1024px) {
+  .kkn-card-overlap {
+    margin-left: -3rem;
+    position: relative;
+    z-index: 30;
+  }
+}
