@@ -231,7 +231,7 @@ const Barang = () => {
 
     try {
       const formData = new FormData();
-      formData.append('_method', 'PUT');
+      // HAPUS baris ini: formData.append('_method', 'PUT');
       formData.append('nama_barang', form.nama_barang);
       formData.append('kategori', form.kategori);
       formData.append('jumlah_total', form.jumlah_total);
@@ -243,6 +243,7 @@ const Barang = () => {
         formData.append('foto', fotoFile);
       }
 
+      // Gunakan api.put() — kirim sebagai PUT langsung
       await api.put(`/barang/${editData.id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
@@ -256,8 +257,10 @@ const Barang = () => {
       if (err.response?.status === 422) {
         setEditErrors(err.response.data.errors || {});
         toast.error('Validasi gagal. Periksa kembali input.');
+      } else if (err.response?.status === 405) {
+        toast.error('Method tidak diizinkan. Pastikan backend mendukung PUT.');
       } else {
-        toast.error('Gagal memperbarui barang.');
+        toast.error('Gagal memperbarui barang. Silakan coba lagi.');
       }
     } finally {
       setEditLoading(false);
